@@ -97,9 +97,9 @@ Sub submit_multiple_replacement()
     ' Tampilkan hasil sustainability
     Call DisplaySustainabilityResults
     
-    MsgBox "Proses " & validCount & " material replacement berhasil (Action ID: " & GlobalActionID & ")" & vbCrLf & _
+    ShowInfo "Proses " & validCount & " material replacement berhasil (Action ID: " & GlobalActionID & ")" & vbCrLf & _
            "Sustainability Before: " & Format(GlobalPercentageBefore3, "0.00%") & vbCrLf & _
-           "Sustainability After: " & Format(GlobalPercentageAfter3, "0.00%"), vbInformation
+           "Sustainability After: " & Format(GlobalPercentageAfter3, "0.00%")
            
     ' Catat ke HISTORY_CHANGE
     Dim lastActionID As String
@@ -227,10 +227,10 @@ Sub CalculateSustainabilityBefore()
         GlobalPercentageBefore3 = 0
     End If
     
-    Debug.Print "Sustainability Before Calculation Completed"
-    Debug.Print "Total Sustainability Before: " & GlobalSustainabilityBefore3
-    Debug.Print "Total Before: " & GlobalTotalBefore3
-    Debug.Print "Percentage Before: " & GlobalPercentageBefore3
+    DebugLog "Sustainability Before Calculation Completed"
+    DebugLog "Total Sustainability Before: " & GlobalSustainabilityBefore3
+    DebugLog "Total Before: " & GlobalTotalBefore3
+    DebugLog "Percentage Before: " & GlobalPercentageBefore3
 End Sub
 
 Sub CalculateSustainabilityAfter()
@@ -334,17 +334,17 @@ Sub CalculateSustainabilityAfter()
         GlobalPercentageAfter3 = 0
     End If
     
-    Debug.Print "Sustainability After Calculation Completed"
-    Debug.Print "Total Sustainability After: " & GlobalSustainabilityAfter3
-    Debug.Print "Total After: " & GlobalTotalAfter3
-    Debug.Print "Percentage After: " & GlobalPercentageAfter3
+    DebugLog "Sustainability After Calculation Completed"
+    DebugLog "Total Sustainability After: " & GlobalSustainabilityAfter3
+    DebugLog "Total After: " & GlobalTotalAfter3
+    DebugLog "Percentage After: " & GlobalPercentageAfter3
     
     ' Debug detail perhitungan per spesifikasi
-    Debug.Print "=== DETAIL PERHITUNGAN PER SPESIFIKASI ==="
-    Debug.Print "Program: Calculate"
-    Debug.Print "Global Sustainability After: " & GlobalSustainabilityAfter3
-    Debug.Print "Global Total After: " & GlobalTotalAfter3
-    Debug.Print "Global Percentage After: " & GlobalPercentageAfter3
+    DebugLog "=== DETAIL PERHITUNGAN PER SPESIFIKASI ==="
+    DebugLog "Program: Calculate"
+    DebugLog "Global Sustainability After: " & GlobalSustainabilityAfter3
+    DebugLog "Global Total After: " & GlobalTotalAfter3
+    DebugLog "Global Percentage After: " & GlobalPercentageAfter3
 
     ' Loop semua sheet untuk debug detail
 
@@ -360,7 +360,7 @@ Sub CalculateSustainabilityAfter()
     For i = 1 To resumeIndex - 1
         Set sh = ThisWorkbook.Sheets(i)
         If sh.Name <> "CATEGORY SPESIFICATION" Then
-            Debug.Print "--- Sheet: " & sh.Name & " ---"
+            DebugLog "--- Sheet: " & sh.Name & " ---"
         
        
             lastRow = sh.Cells(sh.Rows.Count, "H").End(xlUp).Row
@@ -393,43 +393,43 @@ Sub CalculateSustainabilityAfter()
                     For catIdx = 1 To 6
                         If sustainableCategoryNames(catIdx) = categoryName Then
                             sustainabilityTotal = sustainabilityTotal + categoryValue
-                            Debug.Print "    Sustainable: " & categoryName & " = " & categoryValue
+                            DebugLog "    Sustainable: " & categoryName & " = " & categoryValue
                             Exit For
                         End If
                     Next catIdx
                 
-                    Debug.Print "    Category: " & categoryName & " = " & categoryValue
+                    DebugLog "    Category: " & categoryName & " = " & categoryValue
                 End If
             Next Row
         
-            Debug.Print "    Sustainability Total: " & sustainabilityTotal
-            Debug.Print "    Grand Total: " & grandTotal
+            DebugLog "    Sustainability Total: " & sustainabilityTotal
+            DebugLog "    Grand Total: " & grandTotal
             If grandTotal > 0 Then
-                Debug.Print "    Percentage: " & (sustainabilityTotal / grandTotal)
+                DebugLog "    Percentage: " & (sustainabilityTotal / grandTotal)
             End If
         End If
     Next i
 
-    Debug.Print "=== END DEBUG ==="
+    DebugLog "=== END DEBUG ==="
 End Sub
 
 Sub DisplaySustainabilityResults()
     ' Menampilkan hasil sustainability ke worksheet atau konsol
-    Debug.Print "=== SUSTAINABILITY CALCULATION RESULTS ==="
-    Debug.Print "Before Replacement:"
-    Debug.Print "  Total Sustainability: " & GlobalSustainabilityBefore3
-    Debug.Print "  Total Weight: " & GlobalTotalBefore3
-    Debug.Print "  Percentage: " & Format(GlobalPercentageBefore3, "0.00%")
-    Debug.Print ""
-    Debug.Print "After Replacement:"
-    Debug.Print "  Total Sustainability: " & GlobalSustainabilityAfter3
-    Debug.Print "  Total Weight: " & GlobalTotalAfter3
-    Debug.Print "  Percentage: " & Format(GlobalPercentageAfter3, "0.00%")
-    Debug.Print ""
-    Debug.Print "Difference:"
-    Debug.Print "  Sustainability Change: " & (GlobalSustainabilityAfter3 - GlobalSustainabilityBefore3)
-    Debug.Print "  Percentage Change: " & Format(GlobalPercentageAfter3 - GlobalPercentageBefore3, "0.00%")
-    Debug.Print "================================================"
+    DebugLog "=== SUSTAINABILITY CALCULATION RESULTS ==="
+    DebugLog "Before Replacement:"
+    DebugLog "  Total Sustainability: " & GlobalSustainabilityBefore3
+    DebugLog "  Total Weight: " & GlobalTotalBefore3
+    DebugLog "  Percentage: " & Format(GlobalPercentageBefore3, "0.00%")
+    DebugLog ""
+    DebugLog "After Replacement:"
+    DebugLog "  Total Sustainability: " & GlobalSustainabilityAfter3
+    DebugLog "  Total Weight: " & GlobalTotalAfter3
+    DebugLog "  Percentage: " & Format(GlobalPercentageAfter3, "0.00%")
+    DebugLog ""
+    DebugLog "Difference:"
+    DebugLog "  Sustainability Change: " & (GlobalSustainabilityAfter3 - GlobalSustainabilityBefore3)
+    DebugLog "  Percentage Change: " & Format(GlobalPercentageAfter3 - GlobalPercentageBefore3, "0.00%")
+    DebugLog "================================================"
     
     ' Opsional: Simpan ke worksheet tertentu (misalnya CALCULATE sheet)
     Dim wsCalc As Worksheet
@@ -703,7 +703,7 @@ Cleanup:
         ws.Cells(nextRow, 3).Value = Sheets("CALCULATE").Range("B33").Value
         ws.Cells(nextRow, 4).Value = "Multiple Material Replacement (Action ID: " & GlobalActionID & ")"
         
-        MsgBox "Multiple update berhasil dan histori tersimpan.", vbInformation
+        ShowInfo "Multiple update berhasil dan histori tersimpan."
     Else
         MsgBox "Tidak ada material yang ditemukan untuk diganti.", vbExclamation
     End If
@@ -888,7 +888,7 @@ Sub CopySheetByValue(new_material As String)
         Application.CutCopyMode = False
     End With
 
-    MsgBox "Sheet RESUME berhasil disalin ke 'Before " & new_material, vbInformation
+    ShowInfo "Sheet RESUME berhasil disalin ke 'Before " & new_material
     
        
     Application.ScreenUpdating = True
@@ -914,7 +914,7 @@ Sub redo_last_action()
     
     lastRow = wsLog.Cells(wsLog.Rows.Count, "A").End(xlUp).Row
     If lastRow < 2 Then
-        MsgBox "Tidak ada histori undo.", vbInformation
+        ShowInfo "Tidak ada histori undo."
         Call ModuleRingkasan.TampilkanLogRingkas
         Exit Sub
     End If
@@ -1005,7 +1005,7 @@ Sub redo_last_action()
     ws.Cells(nextRow, 4).Value = "Undo Material Replacement (Action ID: " & lastActionID & ")"
     
     Call ModuleRingkasan.TampilkanLogRingkas
-    MsgBox "Undo untuk action terakhir berhasil.", vbInformation
+    ShowInfo "Undo untuk action terakhir berhasil."
     
 CleanExit:
     Application.ScreenUpdating = True
@@ -1036,7 +1036,7 @@ Sub permanenkan_terakhir()
     lastRow = wsLog.Cells(wsLog.Rows.Count, "A").End(xlUp).Row
 
     If lastRow < 2 Then
-        MsgBox "Tidak ada histori yang dapat dihapus.", vbInformation
+        ShowInfo "Tidak ada histori yang dapat dihapus."
         Exit Sub
     End If
 
@@ -1068,7 +1068,7 @@ Sub permanenkan_terakhir()
     ws.Cells(nextRow, 4).Value = "Permanenkan Perubahan (Action ID: " & lastActionID & ")"
 
     Call ModuleRingkasan.TampilkanLogRingkas
-    MsgBox "Perubahan telah dipermanenkan dan histori undo dihapus.", vbInformation
+    ShowInfo "Perubahan telah dipermanenkan dan histori undo dihapus."
 End Sub
 
 
