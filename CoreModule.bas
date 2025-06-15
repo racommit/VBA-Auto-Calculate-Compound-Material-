@@ -1036,7 +1036,9 @@ Sub permanenkan_terakhir()
     lastRow = wsLog.Cells(wsLog.Rows.Count, "A").End(xlUp).Row
 
     If lastRow < 2 Then
+
         ShowInfo "Tidak ada histori yang dapat dihapus."
+
         Exit Sub
     End If
 
@@ -1068,7 +1070,9 @@ Sub permanenkan_terakhir()
     ws.Cells(nextRow, 4).Value = "Permanenkan Perubahan (Action ID: " & lastActionID & ")"
 
     Call ModuleRingkasan.TampilkanLogRingkas
+
     ShowInfo "Perubahan telah dipermanenkan dan histori undo dihapus."
+
 End Sub
 
 
