@@ -82,8 +82,8 @@ For i = 1 To 3
         kelasLama = CariKategoriKelas(replacements(i).material_replaced)
         kelasBaru = UCase(Trim(replacements(i).new_material_class))
         
-        Debug.Print kelasLama
-        Debug.Print kelasBaru
+        DebugLog kelasLama
+        DebugLog kelasBaru
         
        If kelasLama <> "" And kelasBaru <> "" Then
            If InStr(1, kelasLama, kelasBaru, vbTextCompare) = 0 And InStr(1, kelasBaru, kelasLama, vbTextCompare) = 0 Then
@@ -384,8 +384,8 @@ Sub CalculateSustainabilityBefore()
     portion = AmbilMassHorizontal()
     n = UBound(portion)
     
-    Debug.Print UBound(daftarspecBefore)
-    Debug.Print UBound(portion)
+    DebugLog UBound(daftarspecBefore)
+    DebugLog UBound(portion)
     
     Dim wssum As Worksheet
     Set wssum = ThisWorkbook.Sheets("RESUME")    ' Ganti sesuai nama sheet jika berbeda
@@ -443,20 +443,18 @@ Sub CalculateSustainabilityBefore()
         totalallportionBefore = totalallportionBefore + hitungportionBefore(i)
     Next i
 
-    Debug.Print "TOTAL Sustainability Before (tertimbang): " & totalallportionBefore
+    DebugLog "TOTAL Sustainability Before (tertimbang): " & totalallportionBefore
     ThisWorkbook.Sheets("SIMULATION_PROCESS").Range("E27").Value = totalallportionBefore
-    Debug.Print "test"
     If GlobalTotalBefore > 0 Then
         GlobalPercentageBefore = totalPersentaseSustainabilityBefore
-    Else
         GlobalPercentageBefore = 0
         
     End If
     
-    Debug.Print "Sustainability Before Calculation Completed"
-    Debug.Print "Total Sustainability Before: " & GlobalSustainabilityBefore
-    Debug.Print "Total Before: " & GlobalTotalBefore
-    Debug.Print "Percentage Before: " & GlobalPercentageBefore
+    DebugLog "Sustainability Before Calculation Completed"
+    DebugLog "Total Sustainability Before: " & GlobalSustainabilityBefore
+    DebugLog "Total Before: " & GlobalTotalBefore
+    DebugLog "Percentage Before: " & GlobalPercentageBefore
     
     ' === RATA-RATA PER KATEGORI (ACROSS ALL SPEC SHEETS) ===
     Dim categorySum As Object
@@ -478,11 +476,11 @@ Sub CalculateSustainabilityBefore()
                     catValue = sh.Cells(Row, "J").Value
                    
                     If categorySum.exists(catName) Then
-                        Debug.Print i
-                        Debug.Print catName
-                        Debug.Print catValue
+                        DebugLog i
+                        DebugLog catName
+                        DebugLog catValue
                         categorySum(catName) = categorySum(catName) + catValue
-                        Debug.Print categorySum(catName)
+                        DebugLog categorySum(catName)
                         categoryCount(catName) = categoryCount(catName) + 1
                     Else
                         categorySum.Add catName, catValue
@@ -544,7 +542,7 @@ For i = 1 To resumeIndex - 1
 
         If totalAll > 0 Then
             Dim urut As Long
-            Debug.Print "=== Persentase per Kategori untuk SPEC: " & sh.Name & " ==="
+            DebugLog "=== Persentase per Kategori untuk SPEC: " & sh.Name & " ==="
             For urut = LBound(orderedCategories) To UBound(orderedCategories)
                 catName = orderedCategories(urut)
                 Dim nilaiCat As Double: nilaiCat = 0
@@ -560,7 +558,7 @@ For i = 1 To resumeIndex - 1
                 kunciGabung = catName & "|" & sh.Name
                 persentaseKategoriPerSpec(kunciGabung) = persentase
                 
-                Debug.Print catName & "|" & sh.Name & " = " & Format(nilaiCat, "0.0000") & " / " & Format(totalAll, "0.0000") & _
+                DebugLog catName & "|" & sh.Name & " = " & Format(nilaiCat, "0.0000") & " / " & Format(totalAll, "0.0000") & _
                             " = " & Format(persentase, "0.00%")
             Next urut
         End If
@@ -589,11 +587,11 @@ For Each gabungKey In persentaseKategoriPerSpec.Keys
     End If
 Next gabungKey
 
-Debug.Print "=== AVERAGE PERSENTASE PER KATEGORI DI SELURUH SPEC ==="
+DebugLog "=== AVERAGE PERSENTASE PER KATEGORI DI SELURUH SPEC ==="
 Dim avgKategori As Double
 For Each namaKategori In totalPersenPerKategori.Keys
     avgKategori = totalPersenPerKategori(namaKategori) / countPerKategori(namaKategori)
-    Debug.Print namaKategori & ": " & Format(avgKategori, "0.00%")
+    DebugLog namaKategori & ": " & Format(avgKategori, "0.00%")
 Next namaKategori
 
 
@@ -611,7 +609,7 @@ For Each namaKategori In totalPersenPerKategori.Keys
     Next i
 Next namaKategori
 
-Debug.Print "TOTAL AVERAGE SUSTAINABILITY CATEGORY: " & Format(avgTotalSustainability, "0.00%")
+DebugLog "TOTAL AVERAGE SUSTAINABILITY CATEGORY: " & Format(avgTotalSustainability, "0.00%")
 
 
 
@@ -718,7 +716,7 @@ Sub CalculateSustainabilityAfter()
     For Each specKey In specSustainabilityAfter.Keys
         If specTotalAfter(specKey) > 0 Then
             daftarspec(idx) = (specSustainabilityAfter(specKey) / specTotalAfter(specKey))
-            Debug.Print daftarspec(idx)
+            DebugLog daftarspec(idx)
         Else
             daftarspec(idx) = 0
         End If
@@ -738,17 +736,17 @@ Sub CalculateSustainabilityAfter()
         GlobalPercentageAfter = 0
     End If
     
-    Debug.Print "Sustainability After Calculation Completed"
-    Debug.Print "Total Sustainability After: " & GlobalSustainabilityAfter
-    Debug.Print "Total After: " & GlobalTotalAfter
-    Debug.Print "Percentage After: " & GlobalPercentageAfter
+    DebugLog "Sustainability After Calculation Completed"
+    DebugLog "Total Sustainability After: " & GlobalSustainabilityAfter
+    DebugLog "Total After: " & GlobalTotalAfter
+    DebugLog "Percentage After: " & GlobalPercentageAfter
     
     ' Debug detail perhitungan per spesifikasi
-    Debug.Print "=== DETAIL PERHITUNGAN PER SPESIFIKASI ==="
-    Debug.Print "Program: KOMBINASI"
-    Debug.Print "Global Sustainability After: " & GlobalSustainabilityAfter
-    Debug.Print "Global Total After: " & GlobalTotalAfter
-    Debug.Print "Global Percentage After: " & GlobalPercentageAfter
+    DebugLog "=== DETAIL PERHITUNGAN PER SPESIFIKASI ==="
+    DebugLog "Program: KOMBINASI"
+    DebugLog "Global Sustainability After: " & GlobalSustainabilityAfter
+    DebugLog "Global Total After: " & GlobalTotalAfter
+    DebugLog "Global Percentage After: " & GlobalPercentageAfter
 
     ' Loop semua sheet untuk debug detail
     'Dim sh As Worksheet
@@ -773,7 +771,7 @@ Sub CalculateSustainabilityAfter()
     For i = 1 To resumeIndex - 1
         Set sh = ThisWorkbook.Sheets(i)
         If sh.Name <> "CATEGORY SPESIFICATION" Then
-            Debug.Print "--- Sheet: " & sh.Name & " ---"
+            DebugLog "--- Sheet: " & sh.Name & " ---"
         
             'Dim lastRow As Long
             lastRow = sh.Cells(sh.Rows.Count, "H").End(xlUp).Row
@@ -808,22 +806,22 @@ Sub CalculateSustainabilityAfter()
                     For catIdx = 1 To 6
                         If sustainableCategoryNames(catIdx) = categoryName Then
                             sustainabilityTotal = sustainabilityTotal + categoryValue
-                            Debug.Print "    Sustainable: " & categoryName & " = " & categoryValue
+                            DebugLog "    Sustainable: " & categoryName & " = " & categoryValue
                             Exit For
                         End If
                     Next catIdx
                 
-                    Debug.Print "    Category: " & categoryName & " = " & categoryValue
+                    DebugLog "    Category: " & categoryName & " = " & categoryValue
                 End If
             Next Row
         
-            Debug.Print "    Sustainability Total: " & sustainabilityTotal
-            Debug.Print "    Grand Total: " & grandTotal
+            DebugLog "    Sustainability Total: " & sustainabilityTotal
+            DebugLog "    Grand Total: " & grandTotal
        
        
             If grandTotal > 0 Then
                 
-                Debug.Print "    Percentage: " & daftarspec(idxSpec)
+                DebugLog "    Percentage: " & daftarspec(idxSpec)
             Else
                 daftarspec(idxSpec) = 0
             End If
@@ -832,8 +830,8 @@ Sub CalculateSustainabilityAfter()
         End If
     Next i
 
-    Debug.Print "=== END DEBUG ==="
-    Debug.Print "Sample: daftarspec(4) = " & daftarspec(4)
+    DebugLog "=== END DEBUG ==="
+    DebugLog "Sample: daftarspec(4) = " & daftarspec(4)
     
     ' === RATA-RATA PER KATEGORI (ACROSS ALL SPEC SHEETS) ===
     Dim categorySum As Object
@@ -855,11 +853,11 @@ Sub CalculateSustainabilityAfter()
                     catValue = sh.Cells(Row, "J").Value
                    
                     If categorySum.exists(catName) Then
-                        Debug.Print i
-                        Debug.Print catName
-                        Debug.Print catValue
+                        DebugLog i
+                        DebugLog catName
+                        DebugLog catValue
                         categorySum(catName) = categorySum(catName) + catValue
-                        Debug.Print categorySum(catName)
+                        DebugLog categorySum(catName)
                         categoryCount(catName) = categoryCount(catName) + 1
                     Else
                         categorySum.Add catName, catValue
@@ -921,7 +919,7 @@ For i = 1 To resumeIndex - 1
 
         If totalAll > 0 Then
             Dim urut As Long
-            Debug.Print "=== Persentase per Kategori untuk SPEC: " & sh.Name & " ==="
+            DebugLog "=== Persentase per Kategori untuk SPEC: " & sh.Name & " ==="
             For urut = LBound(orderedCategories) To UBound(orderedCategories)
                 catName = orderedCategories(urut)
                 Dim nilaiCat As Double: nilaiCat = 0
@@ -937,7 +935,7 @@ For i = 1 To resumeIndex - 1
                 kunciGabung = catName & "|" & sh.Name
                 persentaseKategoriPerSpec(kunciGabung) = persentase
                 
-                Debug.Print catName & "|" & sh.Name & " = " & Format(nilaiCat, "0.0000") & " / " & Format(totalAll, "0.0000") & _
+                DebugLog catName & "|" & sh.Name & " = " & Format(nilaiCat, "0.0000") & " / " & Format(totalAll, "0.0000") & _
                             " = " & Format(persentase, "0.00%")
             Next urut
         End If
@@ -966,11 +964,11 @@ For Each gabungKey In persentaseKategoriPerSpec.Keys
     End If
 Next gabungKey
 
-Debug.Print "=== AVERAGE PERSENTASE PER KATEGORI DI SELURUH SPEC ==="
+DebugLog "=== AVERAGE PERSENTASE PER KATEGORI DI SELURUH SPEC ==="
 Dim avgKategori As Double
 For Each namaKategori In totalPersenPerKategori.Keys
     avgKategori = totalPersenPerKategori(namaKategori) / countPerKategori(namaKategori)
-    Debug.Print namaKategori & ": " & Format(avgKategori, "0.00%")
+    DebugLog namaKategori & ": " & Format(avgKategori, "0.00%")
 Next namaKategori
 
 
@@ -988,7 +986,7 @@ For Each namaKategori In totalPersenPerKategori.Keys
     Next i
 Next namaKategori
 
-Debug.Print "TOTAL AVERAGE SUSTAINABILITY CATEGORY: " & Format(avgTotalSustainability, "0.00%")
+DebugLog "TOTAL AVERAGE SUSTAINABILITY CATEGORY: " & Format(avgTotalSustainability, "0.00%")
 
  ' Gunakan daftarspec() untuk dikalikan portion()
     Dim hitungportion() As Variant
@@ -1002,11 +1000,11 @@ Debug.Print "TOTAL AVERAGE SUSTAINABILITY CATEGORY: " & Format(avgTotalSustainab
     
     daftarspec(validSheetCount + 1) = avgTotalSustainability
    
-    Debug.Print
+    DebugLog
     For i = 1 To n
         
-        Debug.Print "Persentase: " & daftarspec(i)
-        Debug.Print "Portion: " & portion(i)
+        DebugLog "Persentase: " & daftarspec(i)
+        DebugLog "Portion: " & portion(i)
         hitungportion(i) = daftarspec(i) * portion(i)
     Next i
     
@@ -1016,7 +1014,7 @@ Debug.Print "TOTAL AVERAGE SUSTAINABILITY CATEGORY: " & Format(avgTotalSustainab
     For i = 1 To UBound(hitungportion)
         totalallportion = totalallportion + hitungportion(i)
     Next i
-    Debug.Print "hasil " & totalallportion
+    DebugLog "hasil " & totalallportion
     
     Dim WSsim2 As Worksheet
     Set WSsim2 = ThisWorkbook.Sheets("SIMULATION_PROCESS")
@@ -1028,21 +1026,21 @@ End Sub
 
 Sub DisplaySustainabilityResults()
     ' Menampilkan hasil sustainability ke worksheet atau konsol
-    Debug.Print "=== SUSTAINABILITY CALCULATION RESULTS ==="
-    Debug.Print "Before Replacement:"
-    Debug.Print "  Total Sustainability: " & GlobalSustainabilityBefore
-    Debug.Print "  Total Weight: " & GlobalTotalBefore
-    Debug.Print "  Percentage: " & Format(GlobalPercentageBefore, "0.00%")
-    Debug.Print ""
-    Debug.Print "After Replacement:"
-    Debug.Print "  Total Sustainability: " & GlobalSustainabilityAfter
-    Debug.Print "  Total Weight: " & GlobalTotalAfter
-    Debug.Print "  Percentage: " & Format(GlobalPercentageAfter, "0.00%")
-    Debug.Print ""
-    Debug.Print "Difference:"
-    Debug.Print "  Sustainability Change: " & (GlobalSustainabilityAfter - GlobalSustainabilityBefore)
-    Debug.Print "  Percentage Change: " & Format(GlobalPercentageAfter - GlobalPercentageBefore, "0.00%")
-    Debug.Print "================================================"
+    DebugLog "=== SUSTAINABILITY CALCULATION RESULTS ==="
+    DebugLog "Before Replacement:"
+    DebugLog "  Total Sustainability: " & GlobalSustainabilityBefore
+    DebugLog "  Total Weight: " & GlobalTotalBefore
+    DebugLog "  Percentage: " & Format(GlobalPercentageBefore, "0.00%")
+    DebugLog ""
+    DebugLog "After Replacement:"
+    DebugLog "  Total Sustainability: " & GlobalSustainabilityAfter
+    DebugLog "  Total Weight: " & GlobalTotalAfter
+    DebugLog "  Percentage: " & Format(GlobalPercentageAfter, "0.00%")
+    DebugLog ""
+    DebugLog "Difference:"
+    DebugLog "  Sustainability Change: " & (GlobalSustainabilityAfter - GlobalSustainabilityBefore)
+    DebugLog "  Percentage Change: " & Format(GlobalPercentageAfter - GlobalPercentageBefore, "0.00%")
+    DebugLog "================================================"
     
     ' Opsional: Simpan ke worksheet tertentu (misalnya CALCULATE sheet)
     Dim wsCalc As Worksheet
@@ -1467,8 +1465,8 @@ Sub update_multiple_material_data_with_backup(replacements() As replacementData)
     Next wsName
     
     If found Then
-        Debug.Print "Material update completed with backup. Total backup items: " & MaterialBackupData.Count
-        MsgBox "Update material berhasil! Total backup: " & MaterialBackupData.Count, vbInformation
+        DebugLog "Material update completed with backup. Total backup items: " & MaterialBackupData.Count
+        ShowInfo "Update material berhasil! Total backup: " & MaterialBackupData.Count
     Else
         MsgBox "Tidak ada material yang ditemukan untuk diganti.", vbExclamation
     End If
@@ -1511,7 +1509,7 @@ Sub RunFullSimulationAndSubmit()
     ' ============================
     Call submit_multiple_replacement3
 
-  '  MsgBox "Simulasi + submit selesai.", vbInformation
+  '  ShowInfo "Simulasi + submit selesai."
 End Sub
 
 Sub prepare_partial_replacement(i As Integer, ByRef backupInputs As Variant)
@@ -1558,7 +1556,7 @@ Sub SimulateStepwiseReplacement_WithBackup(ByRef backupInputs As Variant)
         MsgBox "Minimal satu set material (di kolom C) harus diisi untuk simulasi.", vbExclamation
         Exit Sub
     End If
-Debug.Print totalallportion
+DebugLog totalallportion
     ' Jalankan simulasi stepwise
     For i = 1 To x
         Call reset_globaldata
@@ -1567,7 +1565,7 @@ Debug.Print totalallportion
         simResults(i) = GlobalPercentageAfter
         portionkombinasi(i) = totalallportion
         portionkombinasi2(i) = totalallportionBefore
-        Debug.Print portionkombinasi2(i)
+        DebugLog portionkombinasi2(i)
     Next i
 
     ' Tampilkan hasil ke SIMULATION_PROCESS
@@ -1592,7 +1590,7 @@ Debug.Print totalallportion
     If x >= 2 Then resultMsg = resultMsg & "Material 1+2: " & Format(simResults(2), "0.00%") & vbCrLf
     If x >= 3 Then resultMsg = resultMsg & "Material 1+2+3: " & Format(simResults(3), "0.00%")
 
-    MsgBox resultMsg, vbInformation
+    ShowInfo resultMsg
 End Sub
 
 Sub reset_globaldata()
