@@ -1023,4 +1023,52 @@ Sub reset_globaldata()
     GlobalPercentageAfter3 = 0
 End Sub
 
+' Permanenkan perubahan terakhir dengan menghapus histori undo untuk Action ID
+' paling baru. Jalankan sub ini setelah proses submit berhasil apabila data
+' sudah dianggap final.
+Sub permanenkan_terakhir()
+    Dim wsLog As Worksheet
+    Dim lastRow As Long
+    Dim lastActionID As String
+    Dim i As Long
+
+    Set wsLog = ThisWorkbook.Sheets("HISTORY_UNDO")
+    lastRow = wsLog.Cells(wsLog.Rows.Count, "A").End(xlUp).Row
+
+    If lastRow < 2 Then
+        MsgBox "Tidak ada histori yang dapat dihapus.", vbInformation
+        Exit Sub
+    End If
+
+    lastActionID = wsLog.Cells(lastRow, "H").Value
+
+    ' Hapus semua baris dengan Action ID terakhir
+    For i = lastRow To 2 Step -1
+        If wsLog.Cells(i, "H").Value = lastActionID Then
+            wsLog.Rows(i).Delete
+        Else
+            Exit For
+        End If
+    Next i
+
+    ' Catat aksi permanenkan pada HISTORY_CHANGE
+    Dim ws As Worksheet
+    Dim nextRow As Long
+    Set ws = ThisWorkbook.Sheets("HISTORY_CHANGE")
+    nextRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+    If ws.Cells(2, 1).Value = "" Then
+        ws.Cells(2, 1).Value = 1
+        nextRow = 2
+    Else
+        ws.Cells(nextRow, 1).Value = ws.Cells(nextRow - 1, 1).Value + 1
+    End If
+
+    ws.Cells(nextRow, 2).Value = Now
+    ws.Cells(nextRow, 3).Value = Sheets("CALCULATE").Range("B33").Value
+    ws.Cells(nextRow, 4).Value = "Permanenkan Perubahan (Action ID: " & lastActionID & ")"
+
+    Call ModuleRingkasan.TampilkanLogRingkas
+    MsgBox "Perubahan telah dipermanenkan dan histori undo dihapus.", vbInformation
+End Sub
+
 
