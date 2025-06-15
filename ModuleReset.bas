@@ -46,9 +46,9 @@ Sub ResetAllData()
     Application.ScreenUpdating = True
     Application.StatusBar = False
 
-    MsgBox "Reset berhasil!" & vbCrLf & vbCrLf & _
+    ShowInfo "Reset berhasil!" & vbCrLf & vbCrLf & _
            "Semua data input dan hasil kalkulasi telah dihapus." & vbCrLf & _
-           "Anda dapat memasukkan data baru sekarang.", vbInformation, "Reset Selesai"
+           "Anda dapat memasukkan data baru sekarang.", "Reset Selesai"
 End Sub
 
 
@@ -79,7 +79,7 @@ Sub ResetInputOnly()
     
     Application.ScreenUpdating = True
     
-    MsgBox "Input data berhasil direset!", vbInformation, "Reset Input Selesai"
+    ShowInfo "Input data berhasil direset!", "Reset Input Selesai"
     
 End Sub
 
@@ -105,8 +105,8 @@ Sub ResetResultsOnly()
     
     Application.ScreenUpdating = True
     
-    MsgBox "Hasil kalkulasi berhasil direset!" & vbCrLf & _
-           "Silakan jalankan simulasi kembali.", vbInformation, "Reset Hasil Selesai"
+    ShowInfo "Hasil kalkulasi berhasil direset!" & vbCrLf & _
+           "Silakan jalankan simulasi kembali.", "Reset Hasil Selesai"
     
 End Sub
 Private Sub ClearSimulationResults(ByRef ws As Worksheet)
