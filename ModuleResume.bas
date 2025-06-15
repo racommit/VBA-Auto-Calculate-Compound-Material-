@@ -67,7 +67,7 @@ Sub UpdateResumeSheet()
         wsResume.Range(wsResume.Cells(3, 2), wsResume.Cells(16, colOffset - 1)).Borders(xlInsideVertical).LineStyle = xlContinuous
     End If
 
-    MsgBox "Update selesai: " & sheetList.Count & " SPEC sheet berhasil dimasukkan!", vbInformation
+    ShowInfo "Update selesai: " & sheetList.Count & " SPEC sheet berhasil dimasukkan!"
 End Sub
 
 
@@ -89,6 +89,6 @@ Sub CekSheetSebelumResume()
         logMsg = logMsg & ws.Name & vbNewLine
     Next i
 
-    MsgBox logMsg, vbInformation
+    ShowInfo logMsg
 End Sub
 
