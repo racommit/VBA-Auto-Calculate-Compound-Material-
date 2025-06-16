@@ -13,3 +13,9 @@ Khusus pesan informasi, sekarang menggunakan helper `ShowInfo` yang akan
 menampilkan `MsgBox` hanya jika konstanta `SHOW_INFO` bernilai `True`.
 Pesan debug telah dialihkan ke `DebugLog` yang dapat diaktifkan dengan
 mengubah konstanta `DEBUG_MODE` pada `DebugModule`.
+
+## Validasi Input Persentase
+
+Semua prosedur penggantian material kini memeriksa nilai persentase yang
+diberikan. Jika pengguna memasukkan nilai di luar rentang 0–100%, proses
+akan dibatalkan dan pesan kesalahan ditampilkan.
