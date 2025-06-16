@@ -48,6 +48,12 @@ Sub submit_multiple_replacement()
                 .percentage_material = 0
                 .percentage_new_material = 0
             End If
+
+            ' Validasi batas persentase 0% - 100%
+            If Not IsValidPercentage(.percentage_material) Or Not IsValidPercentage(.percentage_new_material) Then
+                MsgBox "Nilai persentase harus antara 0% dan 100%", vbExclamation, "Input Tidak Valid"
+                Exit Sub
+            End If
             
             ' Cek validitas input
             .isValid = (.material_replaced <> "" And .new_material <> "" And _
