@@ -57,6 +57,14 @@ Sub submit_multiple_replacement2()
     inputColumns = Array(3, 7, 11)               ' C=3, G=7, K=11
     Dim WSsim As Worksheet
     Set WSsim = ThisWorkbook.Sheets("SIMULATION_PROCESS")
+
+    ' Reset accumulator arrays
+    For i = LBound(MaterialOldBefore) To UBound(MaterialOldBefore)
+        MaterialOldBefore(i) = 0
+        MaterialOldAfter(i) = 0
+        MaterialNewBefore(i) = 0
+        MaterialNewAfter(i) = 0
+    Next i
     
     
     Dim kelasLama As String, kelasBaru As String
@@ -1233,9 +1241,9 @@ Sub update_multiple_material_data_with_backup(replacements() As replacementData)
             ws.Cells(rowNum, "I").Value = newValue
             found = True
             
-            ' Store before/after values
-            MaterialOldBefore(repIdx) = origValue
-            MaterialOldAfter(repIdx) = newValue
+            ' Store before/after values (akumulasi antar spec)
+            MaterialOldBefore(repIdx) = MaterialOldBefore(repIdx) + origValue
+            MaterialOldAfter(repIdx) = MaterialOldAfter(repIdx) + newValue
             
             ' Accumulate new material
             Dim addedAmount As Double
@@ -1308,10 +1316,10 @@ Sub update_multiple_material_data_with_backup(replacements() As replacementData)
                 
                 ' Store new material before/after values
                 Dim idxNew1 As Long
-                For idxNew1 = 1 To 3
+                For idxNew1 = LBound(replacements) To UBound(replacements)
                     If replacements(idxNew1).isValid And replacements(idxNew1).new_material = materialName Then
-                        MaterialNewBefore(idxNew1) = oldExistingValue
-                        MaterialNewAfter(idxNew1) = oldExistingValue + totalAmount
+                        MaterialNewBefore(idxNew1) = MaterialNewBefore(idxNew1) + oldExistingValue
+                        MaterialNewAfter(idxNew1) = MaterialNewAfter(idxNew1) + oldExistingValue + totalAmount
                         Exit For
                     End If
                 Next idxNew1
@@ -1378,10 +1386,10 @@ Sub update_multiple_material_data_with_backup(replacements() As replacementData)
                     
                     ' Store new material values
                     Dim idxNew2 As Long
-                    For idxNew2 = 1 To 3
+                    For idxNew2 = LBound(replacements) To UBound(replacements)
                         If replacements(idxNew2).isValid And replacements(idxNew2).new_material = materialName Then
-                            MaterialNewBefore(idxNew2) = 0
-                            MaterialNewAfter(idxNew2) = totalAmount
+                            MaterialNewBefore(idxNew2) = MaterialNewBefore(idxNew2) + 0
+                            MaterialNewAfter(idxNew2) = MaterialNewAfter(idxNew2) + totalAmount
                             Exit For
                         End If
                     Next idxNew2
