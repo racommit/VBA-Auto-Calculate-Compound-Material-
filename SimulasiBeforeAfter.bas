@@ -1140,6 +1140,50 @@ Function GetSustainabilityAfter() As Double
     GetSustainabilityAfter = GlobalPercentageAfter
 End Function
 
+
+' Function untuk mengambil nilai NWT Production Tires per spesifikasi
+Function GetNWTValues() As Variant
+    Dim ws As Worksheet
+    Dim sel As Range
+    Dim barisMass As Long
+    Dim kolStart As Long, kol As Long
+    Dim i As Long
+
+    Set ws = ThisWorkbook.Sheets("RESUME")
+
+    ' Cari baris "Total (NWT) Production Tires"
+    For Each sel In ws.UsedRange
+        If Trim(sel.Value) = "Total (NWT) Production Tires" Then
+            barisMass = sel.Row
+        End If
+    Next sel
+
+    If barisMass = 0 Then
+        MsgBox "Total (NWT) Production Tires Tidak Ditemukan", vbCritical
+        Exit Function
+    End If
+
+    kolStart = 3
+    kol = kolStart
+    Do While True
+        Dim val As String
+        val = LCase(Trim(ws.Cells(barisMass, kol).Value))
+        If val = "" Or val = "sisa nwt" Then Exit Do
+        kol = kol + 1
+    Loop
+
+    Dim daftarMass() As Variant
+    ReDim daftarMass(1 To kol - kolStart)
+    For i = 1 To kol - kolStart
+        If IsNumeric(ws.Cells(barisMass, kolStart + i - 1).Value) Then
+            daftarMass(i) = CDbl(ws.Cells(barisMass, kolStart + i - 1).Value)
+        Else
+            daftarMass(i) = 0
+        End If
+    Next i
+
+    GetNWTValues = daftarMass
+End Function
 Function GetSustainabilityChange() As Double
     GetSustainabilityChange = GlobalPercentageAfter - GlobalPercentageBefore
 End Function
@@ -1176,13 +1220,29 @@ Sub update_multiple_material_data_with_backup(replacements() As replacementData)
         End If
     Next i
     
+    Dim nwtValues As Variant
+    nwtValues = GetNWTValues()
+    Dim specIndex As Long
+    specIndex = 0
+
     Dim lastHistRow As Long
     Dim ws As Worksheet
     Dim wsName As Variant
     
     ' Process setiap sheet
     For Each wsName In specSheets
+        specIndex = specIndex + 1
         Set ws = ThisWorkbook.Sheets(wsName)
+
+        ' Hitung total material pada spesifikasi ini
+        Dim totalSpecWeight As Double
+        totalSpecWeight = 0
+        lastRow = ws.Cells(ws.Rows.Count, "J").End(xlUp).Row
+        For i = 3 To lastRow
+            If IsNumeric(ws.Cells(i, "J").Value) Then
+                totalSpecWeight = totalSpecWeight + ws.Cells(i, "J").Value
+            End If
+        Next i
         
         ' Dictionary untuk akumulasi material baru per sheet
         Dim newMaterialAccumulation As Object
@@ -1246,10 +1306,14 @@ Sub update_multiple_material_data_with_backup(replacements() As replacementData)
             ' Update cell
             ws.Cells(rowNum, "I").Value = newValue
             found = True
-            
-            ' Store before/after values (akumulasi antar spec)
-            MaterialOldBefore(repIdx) = MaterialOldBefore(repIdx) + origValue
-            MaterialOldAfter(repIdx) = MaterialOldAfter(repIdx) + newValue
+
+            ' Store before/after values (akumulasi antar spec) dengan perhitungan persentase NWT
+            If totalSpecWeight > 0 Then
+                MaterialOldBefore(repIdx) = MaterialOldBefore(repIdx) + _
+                    (origValue / totalSpecWeight) * nwtValues(specIndex)
+                MaterialOldAfter(repIdx) = MaterialOldAfter(repIdx) + _
+                    (newValue / totalSpecWeight) * nwtValues(specIndex)
+            End If
             
             ' Accumulate new material
             Dim addedAmount As Double
@@ -1324,8 +1388,12 @@ Sub update_multiple_material_data_with_backup(replacements() As replacementData)
                 Dim idxNew1 As Long
                 For idxNew1 = LBound(replacements) To UBound(replacements)
                     If replacements(idxNew1).isValid And replacements(idxNew1).new_material = materialName Then
-                        MaterialNewBefore(idxNew1) = MaterialNewBefore(idxNew1) + oldExistingValue
-                        MaterialNewAfter(idxNew1) = MaterialNewAfter(idxNew1) + oldExistingValue + totalAmount
+                        If totalSpecWeight > 0 Then
+                            MaterialNewBefore(idxNew1) = MaterialNewBefore(idxNew1) + _
+                                (oldExistingValue / totalSpecWeight) * nwtValues(specIndex)
+                            MaterialNewAfter(idxNew1) = MaterialNewAfter(idxNew1) + _
+                                ((oldExistingValue + totalAmount) / totalSpecWeight) * nwtValues(specIndex)
+                        End If
                         Exit For
                     End If
                 Next idxNew1
@@ -1390,12 +1458,16 @@ Sub update_multiple_material_data_with_backup(replacements() As replacementData)
                         MaterialBackupData.Add addedBackupKey, addedBackupValue
                     End If
                     
-                    ' Store new material values
+                    ' Store new material values dengan perhitungan persentase NWT
                     Dim idxNew2 As Long
                     For idxNew2 = LBound(replacements) To UBound(replacements)
                         If replacements(idxNew2).isValid And replacements(idxNew2).new_material = materialName Then
-                            MaterialNewBefore(idxNew2) = MaterialNewBefore(idxNew2) + 0
-                            MaterialNewAfter(idxNew2) = MaterialNewAfter(idxNew2) + totalAmount
+                            If totalSpecWeight > 0 Then
+                                MaterialNewBefore(idxNew2) = MaterialNewBefore(idxNew2) + _
+                                    (0 / totalSpecWeight) * nwtValues(specIndex)
+                                MaterialNewAfter(idxNew2) = MaterialNewAfter(idxNew2) + _
+                                    (totalAmount / totalSpecWeight) * nwtValues(specIndex)
+                            End If
                             Exit For
                         End If
                     Next idxNew2
